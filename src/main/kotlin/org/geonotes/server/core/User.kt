@@ -7,6 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document
 class User(
     id: ObjectId,
     val username: String,
-    val passwordHash: String,
+    val password: String,
     var email: String
 ) : AbstractDocument(id)

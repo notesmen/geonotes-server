@@ -1,49 +1,50 @@
 package org.geonotes.server.core
 
-import java.util.Optional
-
+import org.bson.types.ObjectId
+import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
-import org.geonotes.server.core.exceptions.UserAlreadyExists
-import org.geonotes.server.core.exceptions.UserNotFound
+import org.geonotes.server.logger
+import org.geonotes.server.core.exceptions.UserAlreadyExistsException
+import org.geonotes.server.core.exceptions.AuthenticationFailedException
 import org.geonotes.server.web.AuthenticationRequest
 import org.geonotes.server.web.RegistrationRequest
-import org.geonotes.server.core.exceptions.AuthenticationFailed
-
+import org.geonotes.server.web.auth.TokenHandler
 
 @Component
 class UsersManager {
     fun registerUser(request: RegistrationRequest) {
         if (userRepository.existsByUsername(request.username)) {
-            throw UserAlreadyExists(request.username)
+            throw UserAlreadyExistsException(request.username)
         }
 
+        val user = User(ObjectId.get(), request.username, request.password, request.email)
+
+        userRepository.save(user)
     }
 
     fun startNewSession(request: AuthenticationRequest): String {
-        val user: Optional<User> = userRepository.findUserByUsername(request.username)
-        if (!user.isPresent) {
-            throw UserNotFound(request.username)
+        val user: User = userRepository.findUserByUsername(request.username)
+            ?: throw AuthenticationFailedException(request.username)
+
+        if (user.password != request.password) {
+            throw AuthenticationFailedException(request.username)
         }
 
-        val passwordHash: String = passwordEncoder.encode(request.password)
-        if (user.get().passwordHash != passwordHash) {
-            throw AuthenticationFailed()
-        }
-
-//        tokenRepository.save()
-
-        return ""
+        val token: String = tokenHandler.generateToken(user)
+            ?: throw AuthenticationFailedException()
+        logger.info("New session for '${user.username}' successfully created")
+        return token
     }
 
     @Autowired
     private lateinit var userRepository: UserRepository
 
     @Autowired
-    private lateinit var tokenRepository: TokenRepository
+    private lateinit var tokenHandler: TokenHandler
 
-    private val passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
+    private val logger: Logger by logger()
 }

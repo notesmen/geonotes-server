@@ -1,12 +1,13 @@
 package org.geonotes.server
 
-import java.util.Arrays
-
-import org.springframework.boot.CommandLineRunner
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.context.ApplicationContext
-import org.springframework.context.annotation.Bean
+
+fun <R : Any> R.logger(): Lazy<Logger> {
+    return lazy { LoggerFactory.getLogger(this.javaClass) }
+}
 
 @SpringBootApplication
 open class Application {
