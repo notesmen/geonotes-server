@@ -1,12 +1,14 @@
-package org.geonotes.server.web.config
+package org.geonotes.server.config
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Bean
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 import org.geonotes.server.web.auth.JwtAuthenticationFilter
 import org.geonotes.server.web.auth.RestAuthenticationEntryPoint
@@ -20,7 +22,7 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
             .and()
                 .csrf().disable()
             .authorizeRequests()
-                .antMatchers("/api/login", "/api/register")
+                .antMatchers("/api/auth/login", "/api/auth/register")
                     .permitAll()
                 .anyRequest()
                     .authenticated()
@@ -29,7 +31,13 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
             .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+    }
+
+    @Bean(name = ["MAuthenticationManager"])
+    @Throws(Exception::class)
+    override fun authenticationManagerBean(): AuthenticationManager {
+        return super.authenticationManagerBean()
     }
 
     @Autowired

@@ -4,11 +4,12 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
+
 class JwtTokenAuthentication(private val tokenInfo: TokenHandler.TokenInfo?,
                              private var isAuthenticated: Boolean = false) : Authentication {
 
     override fun setAuthenticated(isAuthenticated: Boolean) {
-        this.isAuthenticated = true;
+        this.isAuthenticated = isAuthenticated;
     }
 
     override fun getName(): String? {
@@ -16,7 +17,7 @@ class JwtTokenAuthentication(private val tokenInfo: TokenHandler.TokenInfo?,
     }
 
     override fun getCredentials(): Any? {
-        return tokenInfo!!.password
+        return tokenInfo?.password
     }
 
     override fun getPrincipal(): Any? {

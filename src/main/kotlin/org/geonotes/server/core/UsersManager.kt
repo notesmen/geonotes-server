@@ -14,6 +14,7 @@ import org.geonotes.server.web.AuthenticationRequest
 import org.geonotes.server.web.RegistrationRequest
 import org.geonotes.server.web.auth.TokenHandler
 
+
 @Component
 class UsersManager {
     fun registerUser(request: RegistrationRequest) {
@@ -21,7 +22,7 @@ class UsersManager {
             throw UserAlreadyExistsException(request.username)
         }
 
-        val user = User(ObjectId.get(), request.username, request.password, request.email)
+        val user = User(ObjectId.get(), request.username, passwordEncoder.encode(request.password), request.email)
 
         userRepository.save(user)
     }
@@ -30,7 +31,7 @@ class UsersManager {
         val user: User = userRepository.findUserByUsername(request.username)
             ?: throw AuthenticationFailedException(request.username)
 
-        if (user.password != request.password) {
+        if (!passwordEncoder.matches(request.password, user.password)) {
             throw AuthenticationFailedException(request.username)
         }
 
@@ -45,6 +46,8 @@ class UsersManager {
 
     @Autowired
     private lateinit var tokenHandler: TokenHandler
+
+    private val passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
 
     private val logger: Logger by logger()
 }

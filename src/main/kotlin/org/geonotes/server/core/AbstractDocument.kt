@@ -3,6 +3,7 @@ package org.geonotes.server.core
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 
+
 open class AbstractDocument(@Id var id: ObjectId = ObjectId.get()) {
     override fun equals(other: Any?): Boolean {
         if (this === other) {

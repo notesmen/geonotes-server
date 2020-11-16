@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
@@ -16,8 +17,8 @@ import org.geonotes.server.core.UserRepository
 
 
 @Component
-class JwtAuthenticationFilter : AbstractAuthenticationProcessingFilter {
-    constructor() : super("/**") {
+class JwtAuthenticationFilter : AbstractAuthenticationProcessingFilter("/api/*") {
+    init {
         setAuthenticationSuccessHandler(JwtAuthenticationSuccessHandler())
     }
 
@@ -43,10 +44,13 @@ class JwtAuthenticationFilter : AbstractAuthenticationProcessingFilter {
         }
 
         val authentication = JwtTokenAuthentication(tokenInfo, true)
-        authenticationManager.authenticate(authentication)
         return authentication
     }
 
+    @Autowired
+    override fun setAuthenticationManager(authenticationManager: AuthenticationManager) {
+        super.setAuthenticationManager(authenticationManager)
+    }
 
     @Autowired
     private lateinit var tokenHandler: TokenHandler

@@ -16,6 +16,7 @@ import io.jsonwebtoken.Claims
 import org.geonotes.server.logger
 import org.geonotes.server.core.User
 
+
 @Service
 class TokenHandler {
     data class TokenInfo(val username: String, val password: String, val expirationTime: LocalDateTime)
@@ -55,10 +56,10 @@ class TokenHandler {
         return null
     }
 
-    @Value("\${api.jwt.tokenValidityDuration}")
+    @Value("\${jwt.token-validity-duration}")
     private var tokenValidityDuration: Long? = null
 
-    @Value("\${api.jwt.encodedSecret}")
+    @Value("\${jwt.encoded-secret}")
     private lateinit var encodedSecretKey: String
 
     private val secretKey: SecretKey by lazy {
