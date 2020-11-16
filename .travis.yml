@@ -15,7 +15,7 @@ cache:
   - "$HOME/.gradle/wrapper/"
 
 script:
-- "./gradlew build --scan -s"
+- "./gradlew build --build-cache -i"
 
 before_install:
 - mkdir -p src/main/resources
