@@ -30,21 +30,17 @@ class JwtAuthenticationFilter : AbstractAuthenticationProcessingFilter("/api/*")
         }
 
         val token = header.substring(7)
-        val tokenInfo: TokenHandler.TokenInfo? = tokenHandler.extractTokenInfo(token)
-
-        if (tokenInfo == null) {
+        val tokenInfo: TokenHandler.TokenInfo? = tokenHandler.extractTokenInfo(token) ?:
             throw AuthenticationServiceException("Invalid token")
-        }
 
-        val tokenOwner: User? = userRepository.findUserByUsername(tokenInfo.username)
+        val tokenOwner: User? = userRepository.findUserByUsername(tokenInfo!!.username)
 
         if (tokenOwner == null) {
             log.warn("Token is valid, but owner not found; username: '${tokenInfo.username}'")
             throw AuthenticationServiceException("Token owner not found")
         }
 
-        val authentication = JwtTokenAuthentication(tokenInfo, true)
-        return authentication
+        return JwtTokenAuthentication(tokenInfo, true)
     }
 
     @Autowired

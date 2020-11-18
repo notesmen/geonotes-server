@@ -12,29 +12,17 @@ class JwtTokenAuthentication(private val tokenInfo: TokenHandler.TokenInfo?,
         this.isAuthenticated = isAuthenticated;
     }
 
-    override fun getName(): String? {
-        return tokenInfo?.username
-    }
+    override fun getName(): String? = tokenInfo?.username
 
-    override fun getCredentials(): Any? {
-        return tokenInfo?.password
-    }
+    override fun getCredentials(): Any? = tokenInfo?.password
 
-    override fun getPrincipal(): Any? {
-        return tokenInfo
-    }
+    override fun getPrincipal(): Any? = tokenInfo
 
-    override fun isAuthenticated(): Boolean {
-        return isAuthenticated
-    }
+    override fun isAuthenticated(): Boolean = isAuthenticated
 
-    override fun getDetails(): Any? {
-        return null
-    }
+    override fun getDetails(): Any? = null
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return authorities
-    }
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> = authorities
 
     private val authorities = mutableListOf(SimpleGrantedAuthority("user"))
 }

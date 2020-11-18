@@ -16,18 +16,16 @@ import org.geonotes.server.core.exceptions.BadRequestException
 class AuthenticationController {
     @PostMapping("register")
     fun registerUser(@RequestBody request: RegistrationRequest): ResponseEntity<Unit> {
-        if (request.username.length !in minUsernameLength..maxUsernameLength) {
-            throw BadRequestException("username.length must be in [4, 20]")
+        if (!Regex(usernameRegexPattern).matches(request.username)) {
+            throw BadRequestException("username doesn't match a pattern $usernameRegexPattern")
         }
 
-        if (request.password.length !in minPasswordLength..maxPasswordLength) {
-            throw BadRequestException("password.length must be in [6, 24]")
+        if (!Regex(passwordRegexPattern).matches(request.password)) {
+            throw BadRequestException("password doesn't match a pattern $passwordRegexPattern")
         }
 
-        with(Regex(emailRegexPattern)) {
-            if (!matches(request.email)) {
-                throw BadRequestException("email doesn't match a pattern")
-            }
+        if (!Regex(emailRegexPattern).matches(request.email)) {
+            throw BadRequestException("email doesn't match a pattern $emailRegexPattern")
         }
 
         usersManager.registerUser(request)
@@ -65,6 +63,13 @@ class AuthenticationController {
     private var maxPasswordLength: Int = 0
 
     private val emailRegexPattern: String = "^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$"
+
+    private val usernameRegexPattern: String
+        get() = "^[a-zA-Z0-9](_(?!(\\.|_))|\\.(?!(_|\\.))|[a-zA-Z0-9])" +
+                "{${minUsernameLength - 2},${maxUsernameLength - 2}}[a-zA-Z0-9]\$"
+
+    private val passwordRegexPattern: String
+        get() = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@\$!%*#?&]{$minPasswordLength,$maxPasswordLength}\$"
 
     private val logger: Logger by logger()
 }

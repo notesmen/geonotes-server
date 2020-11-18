@@ -35,8 +35,8 @@ class UsersManager {
             throw AuthenticationFailedException(request.username)
         }
 
-        val token: String = tokenHandler.generateToken(user)
-            ?: throw AuthenticationFailedException()
+        val token: String = tokenHandler.generateToken(user) ?:
+            throw AuthenticationFailedException()
         logger.info("New session for '${user.username}' successfully created")
         return token
     }
