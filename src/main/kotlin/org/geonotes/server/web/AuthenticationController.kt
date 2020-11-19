@@ -16,17 +16,7 @@ import org.geonotes.server.core.exceptions.BadRequestException
 class AuthenticationController {
     @PostMapping("register")
     fun registerUser(@RequestBody request: RegistrationRequest): ResponseEntity<Unit> {
-        if (!Regex(usernameRegexPattern).matches(request.username)) {
-            throw BadRequestException("username doesn't match a pattern $usernameRegexPattern")
-        }
-
-        if (!Regex(passwordRegexPattern).matches(request.password)) {
-            throw BadRequestException("password doesn't match a pattern $passwordRegexPattern")
-        }
-
-        if (!Regex(emailRegexPattern).matches(request.email)) {
-            throw BadRequestException("email doesn't match a pattern $emailRegexPattern")
-        }
+        validateRequestDetails(request.username, request.password, request.email)
 
         usersManager.registerUser(request)
 
@@ -35,16 +25,24 @@ class AuthenticationController {
 
     @PostMapping("login")
     fun login(@RequestBody request: AuthenticationRequest): ResponseEntity<AuthenticationResponse> {
-        if (request.username.length !in minUsernameLength..maxUsernameLength) {
-            throw BadRequestException("username.length must be in [4, 20]")
-        }
-
-        if (request.password.length !in minPasswordLength..maxPasswordLength) {
-            throw BadRequestException("password.length must be in [6, 24]")
-        }
+        validateRequestDetails(request.username, request.password, null)
 
         val token: String = usersManager.startNewSession(request)
         return ResponseEntity.ok(AuthenticationResponse(token))
+    }
+
+    private fun validateRequestDetails(username: String, password: String, email: String?) {
+        if (!Regex(usernameRegexPattern).matches(username)) {
+            throw BadRequestException("username doesn't match a pattern $usernameRegexPattern")
+        }
+
+        if (!Regex(passwordRegexPattern).matches(password)) {
+            throw BadRequestException("password doesn't match a pattern $passwordRegexPattern")
+        }
+
+        if (email != null && !Regex(emailRegexPattern).matches(email)) {
+            throw BadRequestException("email doesn't match a pattern $emailRegexPattern")
+        }
     }
 
     @Autowired
