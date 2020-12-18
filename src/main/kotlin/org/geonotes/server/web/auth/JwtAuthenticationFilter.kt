@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 
 import org.geonotes.server.logger
-import org.geonotes.server.core.User
+import org.geonotes.server.core.model.User
 import org.geonotes.server.core.UserRepository
 
 

@@ -1,6 +1,7 @@
 package org.geonotes.server.core
 
 import org.bson.types.ObjectId
+import org.geonotes.server.core.model.User
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -22,8 +23,16 @@ class UsersManager {
         if (userRepository.existsByUsername(request.username)) {
             return ResponseEntity("Username '${request.username}' is busy", HttpStatus.CONFLICT)
         }
+        if (userRepository.existsByEmail(request.email)) {
+            return ResponseEntity("Email '${request.email}' already registered", HttpStatus.CONFLICT)
+        }
 
-        val user = User(ObjectId.get(), request.username, passwordEncoder.encode(request.password), request.email)
+        val user = User(
+            ObjectId.get(),
+            request.username,
+            passwordEncoder.encode(request.password),
+            request.email
+        )
 
         userRepository.save(user)
         return ResponseEntity("Registration successful", HttpStatus.CREATED)

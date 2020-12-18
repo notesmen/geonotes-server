@@ -1,4 +1,4 @@
-package org.geonotes.server.core
+package org.geonotes.server.core.model
 
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
