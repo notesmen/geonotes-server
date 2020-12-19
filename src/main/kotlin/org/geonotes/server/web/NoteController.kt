@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 
 import org.geonotes.server.core.NotesManager
-import org.geonotes.server.logger
 
 
 @RestController
@@ -19,14 +18,12 @@ class NoteController {
         @RequestParam(name = "only-changed-after", required = false)
         onlyChangedAfter: Long?
     ): ResponseEntity<Any?> {
-        log.debug("Reached getNotesList")
         val owner: String = retrieveUsername()
         return notesManager.getNotesList(owner, onlyChangedAfter ?: 0)
     }
 
     @PostMapping("download")
     fun retrieveNotes(@RequestBody request: DownloadNotesRequest): ResponseEntity<Any?> {
-        log.debug("Reached retrieveNotes")
         validateDownloadRequest(request)?.let { error ->
             return ResponseEntity(error, HttpStatus.BAD_REQUEST)
         }
@@ -36,7 +33,6 @@ class NoteController {
 
     @PostMapping("upload")
     fun saveNotes(@RequestBody request: UploadNotesRequest): ResponseEntity<Any?> {
-        log.debug("Reached saveNotes")
         validateUploadRequest(request)?.let { error ->
             return ResponseEntity(error, HttpStatus.BAD_REQUEST)
         }
@@ -85,6 +81,4 @@ class NoteController {
 
     @Value("\${api.max-tags-total-length}")
     private var maxTagsFieldLength: Int = 0
-
-    private val log by logger()
 }

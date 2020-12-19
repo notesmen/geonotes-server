@@ -42,9 +42,7 @@ class JwtAuthenticationFilter : AbstractAuthenticationProcessingFilter("/api/**"
             throw AuthenticationServiceException("Token owner not found")
         }
 
-        val authentication = JwtTokenAuthentication(tokenInfo, true)
-
-        return authentication
+        return JwtTokenAuthentication(tokenInfo, true)
     }
 
     override fun successfulAuthentication(
