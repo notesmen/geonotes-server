@@ -4,10 +4,11 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 
 import org.geonotes.server.core.NotesManager
-import org.springframework.http.HttpStatus
+import org.geonotes.server.logger
 
 
 @RestController
@@ -18,12 +19,14 @@ class NoteController {
         @RequestParam(name = "only-changed-after", required = false)
         onlyChangedAfter: Long?
     ): ResponseEntity<Any?> {
+        log.debug("Reached getNotesList")
         val owner: String = retrieveUsername()
         return notesManager.getNotesList(owner, onlyChangedAfter ?: 0)
     }
 
     @PostMapping("download")
     fun retrieveNotes(@RequestBody request: DownloadNotesRequest): ResponseEntity<Any?> {
+        log.debug("Reached retrieveNotes")
         validateDownloadRequest(request)?.let { error ->
             return ResponseEntity(error, HttpStatus.BAD_REQUEST)
         }
@@ -33,6 +36,7 @@ class NoteController {
 
     @PostMapping("upload")
     fun saveNotes(@RequestBody request: UploadNotesRequest): ResponseEntity<Any?> {
+        log.debug("Reached saveNotes")
         validateUploadRequest(request)?.let { error ->
             return ResponseEntity(error, HttpStatus.BAD_REQUEST)
         }
@@ -54,10 +58,10 @@ class NoteController {
             if (note.title.length !in 1..maxTitleLength) {
                 return "note.title length must be in [1, $maxTitleLength]"
             }
-            if (note.text.length !in 1..maxTextLength) {
+            if (note.text.length !in 0..maxTextLength) {
                 return "note.text length must be in [1, $maxTextLength]"
             }
-            if (note.tags.sumBy { it.length } !in 1..maxTagsFieldLength) {
+            if (note.tags.sumBy { it.length } !in 0..maxTagsFieldLength) {
                 return "note.tags field is too large in total (must be in [1, $maxTagsFieldLength])"
             }
         }
@@ -81,4 +85,6 @@ class NoteController {
 
     @Value("\${api.max-tags-total-length}")
     private var maxTagsFieldLength: Int = 0
+
+    private val log by logger()
 }

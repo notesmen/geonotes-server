@@ -19,7 +19,7 @@ class NotesManager {
         return ResponseEntity.ok(NotesListResponse(noteDescriptions))
     }
 
-    fun retrieveNotes(owner: String, noteIds: LongArray): ResponseEntity<Any?> {
+    fun retrieveNotes(owner: String, noteIds: Array<Long>): ResponseEntity<Any?> {
         val notes: Array<NoteResponse> =
             noteRepository.findNotesByOwnerAndNoteIdIn(owner, noteIds)
                 .map { NoteResponse(it.noteId, it.title, it.text, it.color, it.lastChangeTime, it.tags) }

@@ -11,5 +11,5 @@ interface NoteRepository : MongoRepository<Note, ObjectId> {
     fun findNotesByOwner(owner: String): List<Note>
     fun findNotesByOwnerAndLastChangeTimeIsGreaterThanEqual(owner: String, lastChangeTime: Long): List<Note>
 
-    fun findNotesByOwnerAndNoteIdIn(owner: String, noteIds: LongArray): List<Note>
+    fun findNotesByOwnerAndNoteIdIn(owner: String, noteIds: Array<Long>): List<Note>
 }

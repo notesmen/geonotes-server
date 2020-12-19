@@ -18,12 +18,13 @@ import org.geonotes.server.web.auth.RestAuthenticationEntryPoint
 @EnableWebSecurity
 open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity?) {
+
         http!!.cors()
             .and()
                 .csrf().disable()
             .authorizeRequests()
-                .antMatchers("/api/auth/login", "/api/auth/register")
-                    .permitAll()
+//                .antMatchers("/api/auth/login", "/api/auth/register")
+//                    .permitAll()
                 .anyRequest()
                     .authenticated()
             .and()
