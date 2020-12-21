@@ -14,7 +14,7 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.Claims
 
 import org.geonotes.server.logger
-import org.geonotes.server.core.User
+import org.geonotes.server.core.model.User
 
 
 @Service

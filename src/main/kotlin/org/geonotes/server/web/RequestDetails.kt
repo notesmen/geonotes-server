@@ -6,3 +6,9 @@ data class RegistrationRequest(val username: String,
 
 data class AuthenticationRequest(val username: String,
                                  val password: String)
+
+data class DownloadNotesRequest(val noteIds: Array<Long> = arrayOf())
+
+typealias NoteRequest = NoteResponse
+
+data class UploadNotesRequest(val notes: Array<NoteRequest> = arrayOf())

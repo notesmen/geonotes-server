@@ -9,15 +9,17 @@ import org.springframework.stereotype.Component
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 
 import org.geonotes.server.logger
-import org.geonotes.server.core.User
+import org.geonotes.server.core.model.User
 import org.geonotes.server.core.UserRepository
+import javax.servlet.FilterChain
 
 
 @Component
-class JwtAuthenticationFilter : AbstractAuthenticationProcessingFilter("/api/*") {
+class JwtAuthenticationFilter : AbstractAuthenticationProcessingFilter("/api/**") {
     init {
         setAuthenticationSuccessHandler(JwtAuthenticationSuccessHandler())
     }
@@ -41,6 +43,16 @@ class JwtAuthenticationFilter : AbstractAuthenticationProcessingFilter("/api/*")
         }
 
         return JwtTokenAuthentication(tokenInfo, true)
+    }
+
+    override fun successfulAuthentication(
+        request: HttpServletRequest?,
+        response: HttpServletResponse?,
+        chain: FilterChain?,
+        authResult: Authentication?
+    ) {
+        super.successfulAuthentication(request, response, chain, authResult)
+        chain?.doFilter(request, response)
     }
 
     @Autowired
