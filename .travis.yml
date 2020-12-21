@@ -13,6 +13,5 @@ cache:
 script:
 - "./gradlew build --build-cache -i"
 before_install:
-- openssl aes-256-cbc -K $encrypted_06f65155ec73_key -iv $encrypted_06f65155ec73_iv
-  -in application.properties.enc -out src/main/resources/application.properties -d
+- openssl aes-256-cbc -K $encrypted_06f65155ec73_key -iv $encrypted_06f65155ec73_iv -in application.properties.enc -out src/main/resources/application.properties -d
 - mkdir -p src/main/resources
